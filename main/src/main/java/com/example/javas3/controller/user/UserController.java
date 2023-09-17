@@ -1,7 +1,6 @@
 package com.example.javas3.controller.user;
 
 import com.example.javas3.dto.user.UserDto;
-import com.example.javas3.service.comment.CommentService;
 import com.example.javas3.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -14,11 +13,10 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private final UserService userService;
-    private final CommentService commentService;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public UserDto addUser(@Validated @RequestBody UserDto userDto) {
+    public UserDto addUser(@Validated @RequestBody UserDto userDto)  {
         return userService.addUser(userDto);
     }
 

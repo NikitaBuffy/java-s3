@@ -4,6 +4,7 @@ import com.example.javas3.model.comment.Comment;
 import lombok.experimental.UtilityClass;
 
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 
 @UtilityClass
 public class CommentMapper {
@@ -14,7 +15,8 @@ public class CommentMapper {
                 newCommentDto.getText(),
                 null,
                 null,
-                newCommentDto.getRating()
+                newCommentDto.getRating(),
+                null
         );
     }
 
@@ -24,7 +26,8 @@ public class CommentMapper {
                 comment.getAuthor().getName(),
                 comment.getText(),
                 comment.getCreated().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
-                comment.getRating()
+                comment.getRating(),
+                comment.getPhotos() != null ? comment.getPhotos() : new ArrayList<>()
         );
     }
 }

@@ -15,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,10 +30,16 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public CommentDto addComment(Long userId, NewCommentDto newCommentDto) {
         User user = userService.getExistingUser(userId);
+        List<String> photoUrls = new ArrayList<>();
+
+        if (newCommentDto.getPhotos() != null) {
+            // Добавление фото в сервисе Upload
+        }
 
         Comment comment = CommentMapper.toComment(newCommentDto);
         comment.setAuthor(user);
         comment.setCreated(LocalDateTime.now());
+        comment.setPhotos(photoUrls);
 
         Comment addedComment = commentRepository.save(comment);
         log.info("Added new comment: comment = {}", addedComment);

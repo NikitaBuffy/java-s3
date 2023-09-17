@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -32,4 +33,9 @@ public class Comment {
 
     @Column(name = "rating")
     private int rating;
+
+    @ElementCollection
+    @CollectionTable(name = "comment_photos", joinColumns = @JoinColumn(name = "comment_id"))
+    @Column(name = "photo_url")
+    private List<String> photos;
 }

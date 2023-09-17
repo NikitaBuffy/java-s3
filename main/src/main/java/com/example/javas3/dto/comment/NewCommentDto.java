@@ -4,6 +4,9 @@ import javax.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -18,4 +21,6 @@ public class NewCommentDto {
     @Min(1)
     @Max(5)
     private int rating;
+
+    private List<MultipartFile> photos;
 }
