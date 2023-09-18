@@ -8,6 +8,7 @@ import com.example.javas3.model.comment.CommentSort;
 import com.example.javas3.model.user.User;
 import com.example.javas3.repository.comment.CommentRepository;
 import com.example.javas3.service.user.UserService;
+import com.example.javas3.uploadclient.UploadClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -26,6 +27,7 @@ public class CommentServiceImpl implements CommentService {
 
     private final CommentRepository commentRepository;
     private final UserService userService;
+    private final UploadClient uploadClient;
 
     @Override
     public CommentDto addComment(Long userId, NewCommentDto newCommentDto) {
