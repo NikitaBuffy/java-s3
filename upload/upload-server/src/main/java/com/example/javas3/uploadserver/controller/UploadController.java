@@ -3,10 +3,11 @@ package com.example.javas3.uploadserver.controller;
 import com.example.javas3.uploadserver.service.UploadService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -18,7 +19,8 @@ public class UploadController {
     private final UploadService uploadService;
 
     @PostMapping("/upload")
-    public List<String> upload(@RequestBody List<MultipartFile> photos) {
+    @ResponseStatus(HttpStatus.CREATED)
+    public List<String> upload(@RequestBody List<byte[]> photos) {
         return uploadService.uploadPhoto(photos);
     }
 }

@@ -19,7 +19,7 @@ public class CommentController {
 
     @PostMapping("/users/{userId}")
     @ResponseStatus(HttpStatus.CREATED)
-    public CommentDto addComment(@PathVariable Long userId, @Validated @RequestBody NewCommentDto newCommentDto) {
+    public CommentDto addComment(@PathVariable Long userId, @Validated @ModelAttribute NewCommentDto newCommentDto) {
         return commentService.addComment(userId, newCommentDto);
     }
 

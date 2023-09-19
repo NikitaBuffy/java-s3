@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -35,7 +36,16 @@ public class CommentServiceImpl implements CommentService {
         List<String> photoUrls = new ArrayList<>();
 
         if (newCommentDto.getPhotos() != null) {
-            // Добавление фото в сервисе Upload
+            ResponseEntity<List<String>> response = uploadClient.upload(newCommentDto.getPhotos());
+
+            if (response.getStatusCode().is2xxSuccessful()) {
+                List<String> responseBody = response.getBody();
+                if (responseBody != null) {
+                    photoUrls.addAll(responseBody);
+                }
+            } else {
+                log.error("Cannot upload photos. Upload service returned status {}", response.getStatusCode());
+            }
         }
 
         Comment comment = CommentMapper.toComment(newCommentDto);
