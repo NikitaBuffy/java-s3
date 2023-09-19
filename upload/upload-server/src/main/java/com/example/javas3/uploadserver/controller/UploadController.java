@@ -18,6 +18,12 @@ public class UploadController {
 
     private final UploadService uploadService;
 
+
+    /**
+     * Загрузка фотографий на облачное хранилище S3
+     * @param photos Список фотографий в байтах
+     * @return Список ссылок на загруженные файлы
+     */
     @PostMapping("/upload")
     @ResponseStatus(HttpStatus.CREATED)
     public List<String> upload(@RequestBody List<byte[]> photos) {

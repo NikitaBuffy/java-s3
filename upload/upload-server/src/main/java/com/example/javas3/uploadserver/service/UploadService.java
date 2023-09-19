@@ -4,5 +4,8 @@ import java.util.List;
 
 public interface UploadService {
 
+    /**
+     * @see UploadServiceImpl#uploadPhoto
+     */
     List<String> uploadPhoto(List<byte[]> photos);
 }

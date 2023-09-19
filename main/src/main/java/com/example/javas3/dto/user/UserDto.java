@@ -10,8 +10,14 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class UserDto {
 
+    /**
+     * Идентификатор
+     */
     private Long id;
 
+    /**
+     * Имя пользователя
+     */
     @NotBlank
     @Size(min = 2, max = 250)
     private String name;

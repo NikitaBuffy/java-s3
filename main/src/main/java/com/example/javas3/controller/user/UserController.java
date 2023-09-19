@@ -14,12 +14,21 @@ public class UserController {
 
     private final UserService userService;
 
+    /**
+     * Создание нового пользователя
+     * @param userDto Данные добавляемого пользователя
+     * @return Созданный пользователь
+     */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public UserDto addUser(@Validated @RequestBody UserDto userDto)  {
         return userService.addUser(userDto);
     }
 
+    /**
+     * Удаление пользователя по ID
+     * @param userId ID пользователя
+     */
     @DeleteMapping("/{userId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteUser(@PathVariable Long userId) {

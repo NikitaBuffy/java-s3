@@ -28,6 +28,14 @@ public class UploadServiceImpl implements UploadService {
 
     private final ObjectStorageConfig objectStorageConfig;
 
+    /**
+     * Загрузка фотографий на облачное хранилище S3
+     * @param photos Список фотографий в байтах
+     * @return Список ссылок на загруженные файлы
+     * @throws SdkClientException Если не удается создать клиент S3
+     * @throws AmazonS3Exception Если возникнет проблема при обращении к хранилищу S3
+     * @throws RuntimeException Если во время исполнения одного из потоков произойдет ошибка
+     */
     @Override
     public List<String> uploadPhoto(List<byte[]> photos) {
         List<String> urls = new ArrayList<>();
@@ -54,6 +62,7 @@ public class UploadServiceImpl implements UploadService {
         }
 
         try {
+            // Создание пула потоков
             ExecutorService executorService = Executors.newFixedThreadPool(photos.size());
             List<Future<String>> futures = new ArrayList<>();
 
@@ -63,12 +72,12 @@ public class UploadServiceImpl implements UploadService {
                     ObjectMetadata metadata = new ObjectMetadata();
                     metadata.setContentLength(photoBytes.length);
 
-                    // Загружаем файл в Yandex Object Storage
+                    // Загрузка файла в Yandex Object Storage
                     ByteArrayInputStream inputStream = new ByteArrayInputStream(photoBytes);
                     s3Client.putObject(bucketName, fileName, inputStream, metadata);
                     log.info("Upload Service. Added file: " + fileName + " to bucket: " + bucketName);
 
-                    // Получаем ссылку на загруженный файл
+                    // Получение ссылки на загруженный файл
                     String url = s3Client.getUrl(bucketName, fileName).toExternalForm();
 
                     return url;
@@ -77,6 +86,7 @@ public class UploadServiceImpl implements UploadService {
                 futures.add(future);
             }
 
+            // Ожидание завершения задач
             for (Future<String> future : futures) {
                 try {
                     String url = future.get();

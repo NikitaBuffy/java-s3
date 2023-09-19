@@ -26,6 +26,11 @@ public class UploadClient {
 
     public static final String UPLOAD_API_PREFIX = "/upload";
 
+    /**
+     * Отправка на сервер запроса на загрузку фотографий
+     * @param photos Список фотографий
+     * @return Ответ сервера, содержащий в теле список ссылок на загруженные фотографии
+     */
     public ResponseEntity<List<String>> upload(List<MultipartFile> photos) {
         List<byte[]> photoBytes = new ArrayList<>();
         for (MultipartFile photo : photos) {
