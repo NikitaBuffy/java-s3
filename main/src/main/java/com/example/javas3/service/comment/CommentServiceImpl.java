@@ -8,10 +8,12 @@ import com.example.javas3.model.comment.CommentSort;
 import com.example.javas3.model.user.User;
 import com.example.javas3.repository.comment.CommentRepository;
 import com.example.javas3.service.user.UserService;
+import com.example.javas3.uploadclient.UploadClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -26,6 +28,7 @@ public class CommentServiceImpl implements CommentService {
 
     private final CommentRepository commentRepository;
     private final UserService userService;
+    private final UploadClient uploadClient;
 
     @Override
     public CommentDto addComment(Long userId, NewCommentDto newCommentDto) {
@@ -33,7 +36,16 @@ public class CommentServiceImpl implements CommentService {
         List<String> photoUrls = new ArrayList<>();
 
         if (newCommentDto.getPhotos() != null) {
-            // Добавление фото в сервисе Upload
+            ResponseEntity<List<String>> response = uploadClient.upload(newCommentDto.getPhotos());
+
+            if (response.getStatusCode().is2xxSuccessful()) {
+                List<String> responseBody = response.getBody();
+                if (responseBody != null) {
+                    photoUrls.addAll(responseBody);
+                }
+            } else {
+                log.error("Cannot upload photos. Upload service returned status {}", response.getStatusCode());
+            }
         }
 
         Comment comment = CommentMapper.toComment(newCommentDto);

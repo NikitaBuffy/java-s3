@@ -1,17 +1,15 @@
 version: '3.1'
 services:
   upload-service:
-    build: upload
-    image: upload-service
-    container_name: upload-service
+    build: upload/upload-server
+    image: upload-server
+    container_name: upload-server
     ports:
       - "9090:9090"
-    depends_on:
-      - main-db
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://main-db:5432/s3-db
-      - POSTGRES_USER=admin
-      - POSTGRES_PASSWORD=admin
+      - BUCKET_NAME=your_bucket
+      - ACCESS_KEY_ID=your_key
+      - SECRET_KEY=your_secret
 
   s3-service:
     build: main
@@ -22,7 +20,7 @@ services:
     depends_on:
       - main-db
     environment:
-#      - STAT_SERVER_URL=http://stats-server:9090
+      - UPLOAD_SERVER_URL=http://upload-server:9090
       - SPRING_DATASOURCE_URL=jdbc:postgresql://main-db:5432/s3-db
       - POSTGRES_USER=admin
       - POSTGRES_PASSWORD=admin
