@@ -16,6 +16,10 @@ import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 @Service
 @Slf4j
@@ -50,21 +54,40 @@ public class UploadServiceImpl implements UploadService {
         }
 
         try {
+            ExecutorService executorService = Executors.newFixedThreadPool(photos.size());
+            List<Future<String>> futures = new ArrayList<>();
+
             for (byte[] photoBytes : photos) {
-                String fileName = generateUniqueName();
-                ObjectMetadata metadata = new ObjectMetadata();
-                metadata.setContentLength(photoBytes.length);
+                Future<String> future = executorService.submit(() -> {
+                    String fileName = generateUniqueName();
+                    ObjectMetadata metadata = new ObjectMetadata();
+                    metadata.setContentLength(photoBytes.length);
 
-                // Загружаем файл в Yandex Object Storage
-                ByteArrayInputStream inputStream = new ByteArrayInputStream(photoBytes);
-                s3Client.putObject(bucketName, fileName, inputStream, metadata);
-                log.info("Upload Service. Added file: " + fileName + " to bucket: " + bucketName);
+                    // Загружаем файл в Yandex Object Storage
+                    ByteArrayInputStream inputStream = new ByteArrayInputStream(photoBytes);
+                    s3Client.putObject(bucketName, fileName, inputStream, metadata);
+                    log.info("Upload Service. Added file: " + fileName + " to bucket: " + bucketName);
 
-                // Получаем ссылку на загруженный файл
-                String url = s3Client.getUrl(bucketName, fileName).toExternalForm();
+                    // Получаем ссылку на загруженный файл
+                    String url = s3Client.getUrl(bucketName, fileName).toExternalForm();
 
-                urls.add(url);
+                    return url;
+                });
+
+                futures.add(future);
             }
+
+            for (Future<String> future : futures) {
+                try {
+                    String url = future.get();
+                    urls.add(url);
+                } catch (InterruptedException | ExecutionException e) {
+                    log.error("One of the thread ended with exception. Reason: {}", e.getMessage());
+                    throw new RuntimeException(e);
+                }
+            }
+
+            executorService.shutdown();
         } catch (AmazonS3Exception e) {
             log.error("Error uploading photos to Object Storage. Reason: {}", e.getMessage());
             throw new AmazonS3Exception(e.getMessage());
