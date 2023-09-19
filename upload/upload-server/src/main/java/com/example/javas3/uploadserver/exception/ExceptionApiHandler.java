@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.concurrent.ExecutionException;
 
 @RestControllerAdvice
 @Slf4j
@@ -24,6 +25,14 @@ public class ExceptionApiHandler {
         log.debug(exception.getMessage());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(new ApiError("INTERNAL_SERVER_ERROR", "Something has gone wrong with AWS SDK.",
+                        exception.getMessage(), LocalDateTime.now().format(DATE_FORMAT)));
+    }
+
+    @ExceptionHandler({InterruptedException.class, ExecutionException.class})
+    public ResponseEntity<ApiError> runtimeException(RuntimeException exception) {
+        log.debug(exception.getMessage());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new ApiError("INTERNAL_SERVER_ERROR", "One of the thread ended with exception.",
                         exception.getMessage(), LocalDateTime.now().format(DATE_FORMAT)));
     }
 }
