@@ -6,6 +6,9 @@
 
 Проект реализовывался на основе идеи из моего веб-приложения [Explore With Me.](https://github.com/NikitaBuffy/java-explore-with-me)
 
+## Статья по проекту на Habr
+
+[![Habr](https://img.shields.io/badge/Habr-65A3BE.svg?style=for-the-badge&logo=Habr&logoColor=white)](https://habr.com/ru/articles/762800/)
 
 ## Используемые технологии
 
